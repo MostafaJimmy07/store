@@ -15,7 +15,7 @@ const {
 
 let client: Pool;
 
-if (NODE_ENV == 'test') {
+if (NODE_ENV === 'test') {
   console.log('test environment');
   client = new Pool({
     port: parseInt(POSTGRES_PORT as string),

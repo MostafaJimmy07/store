@@ -16,10 +16,8 @@ const server_1 = __importDefault(require("../../server"));
 const supertest_1 = __importDefault(require("supertest"));
 const request = (0, supertest_1.default)(server_1.default);
 describe('Orders controller', () => {
-    // eslint-disable-next-line no-var
-    var token;
-    // eslint-disable-next-line prefer-const
-    let getToken = () => __awaiter(void 0, void 0, void 0, function* () {
+    let token;
+    const getToken = () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.post('/users');
         token = response.body.token;
         return 'Bearer ' + token;

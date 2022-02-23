@@ -14,7 +14,7 @@
     "migrate:up": "db-migrate up",
     "migrate:down": "db-migrate down",
     "migrate:reset": "db-migrate reset",
-    "test": "set ENV=test && db-migrate --env test up && jasmine && db-migrate --env test reset"
+    "test": "set NODE_ENV = test && tsc  && db-migrate up --env test && jasmine && db-migrate reset"
   },
   "repository": {
     "type": "git",

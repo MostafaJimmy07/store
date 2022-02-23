@@ -18,16 +18,14 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const request = (0, supertest_1.default)(server_1.default);
 dotenv_1.default.config();
 describe('Products endpoints', () => {
-    // eslint-disable-next-line no-var
-    var token;
-    // eslint-disable-next-line prefer-const
-    let getToken = () => __awaiter(void 0, void 0, void 0, function* () {
+    let token;
+    const getToken = () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.post('/users');
         token = response.body.token;
         return 'Bearer ' + token;
     });
     /////////////////////////////////////////////////////////////////////////////////////////////
-    describe('POST /product/create', () => {
+    describe('POST /products/create', () => {
         it('/products endpoint should responds with status 404 with token', () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield request
                 .post('/products/create')
@@ -36,7 +34,7 @@ describe('Products endpoints', () => {
         }));
     });
     /////////////////////////////////////////////////////////////////////////////////////////////
-    describe('GET /products/indx', () => {
+    describe('GET /products/index', () => {
         it('/products/index this endpoint should return all products with response status 404', () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield request.get('/products/index');
             expect(response.status).toBe(404);
