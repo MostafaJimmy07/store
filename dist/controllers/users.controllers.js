@@ -23,12 +23,12 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.body;
     try {
         const newUser = yield userModel.create(user);
-        const token = (0, jwtAuthentication_1.createAuthToken)(newUser.user_name);
+        // const token = createAuthToken(newUser.user_name);
         res.json({
             status: 'success',
-            data: Object.assign({}, newUser),
+            result: Object.assign({}, newUser),
             message: 'User Created Successfully',
-            token: token,
+            //token: token,
         });
     }
     catch (error) {
@@ -72,7 +72,11 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({ message: 'Users Not Found' });
         }
         else {
-            res.json({ message: 'success', data: users });
+            res.json({
+                status: 'success',
+                result: users,
+                message: 'User retrieved successfully',
+            });
         }
     }
     catch (error) {
@@ -92,7 +96,11 @@ const show = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({ message: 'User Not Found' });
         }
         else {
-            res.json({ message: 'Success', data: user });
+            res.json({
+                status: 'success',
+                result: user,
+                message: 'User retrieved successfully',
+            });
         }
     }
     catch (error) {

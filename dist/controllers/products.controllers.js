@@ -22,7 +22,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const newProduct = yield productModel.create(product);
         res.json({
             status: 'success',
-            data: Object.assign({}, newProduct),
+            result: Object.assign({}, newProduct),
             message: 'Product Created Successfully',
         });
     }
@@ -40,7 +40,11 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({ message: 'Products Not Found' });
         }
         else {
-            res.json({ message: 'success', data: products });
+            res.json({
+                status: 'success',
+                result: Object.assign({}, products),
+                message: 'Products retrieved successfully',
+            });
         }
     }
     catch (error) {
@@ -60,7 +64,11 @@ const show = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({ message: 'Product Not Found' });
         }
         else {
-            res.json({ message: 'Success', data: product });
+            res.json({
+                status: 'success',
+                result: Object.assign({}, product),
+                message: 'Product retrieved successfully',
+            });
         }
     }
     catch (error) {

@@ -22,14 +22,14 @@ class UserModel {
     //////////////////////////////////CREATE USER////////////////////////////////////////////////////////
     create(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { user_name, first_name, last_name } = user;
+            const { user_name, first_name, last_name, password } = user;
             try {
                 //open conn with DB
                 const connect = yield database_1.default.connect();
                 const sql = `INSERT INTO users (user_name , first_name , last_name ,password) 
                    VALUES ($1,$2,$3,$4) returning * `;
                 //run query
-                const hash = bcrypt_1.default.hashSync(user.password + pepper, parseInt(saltrounds));
+                const hash = bcrypt_1.default.hashSync(password + pepper, parseInt(saltrounds));
                 const result = yield connect.query(sql, [
                     user_name,
                     first_name,

@@ -9,12 +9,12 @@ export const register = async (req: Request, res: Response) => {
   const user = req.body;
   try {
     const newUser = await userModel.create(user);
-    const token = createAuthToken(newUser.user_name);
+    // const token = createAuthToken(newUser.user_name);
     res.json({
       status: 'success',
-      data: { ...newUser },
+      result: { ...newUser },
       message: 'User Created Successfully',
-      token: token,
+      //token: token,
     });
   } catch (error) {
     res.status(500).send({
@@ -52,7 +52,11 @@ export const index = async (req: Request, res: Response) => {
     if (!users) {
       res.json({ message: 'Users Not Found' });
     } else {
-      res.json({ message: 'success', data: users });
+      res.json({
+        status: 'success',
+        result: users,
+        message: 'User retrieved successfully',
+      });
     }
   } catch (error) {
     res.status(500).send({
@@ -69,7 +73,11 @@ export const show = async (req: Request, res: Response) => {
     if (!user) {
       res.json({ message: 'User Not Found' });
     } else {
-      res.json({ message: 'Success', data: user });
+      res.json({
+        status: 'success',
+        result: user,
+        message: 'User retrieved successfully',
+      });
     }
   } catch (error) {
     res.status(500).send({

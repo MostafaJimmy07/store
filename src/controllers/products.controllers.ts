@@ -8,7 +8,7 @@ export const create = async (req: Request, res: Response) => {
     const newProduct = await productModel.create(product);
     res.json({
       status: 'success',
-      data: { ...newProduct },
+      result: { ...newProduct },
       message: 'Product Created Successfully',
     });
   } catch (err) {
@@ -23,7 +23,11 @@ export const index = async (req: Request, res: Response) => {
     if (!products) {
       res.json({ message: 'Products Not Found' });
     } else {
-      res.json({ message: 'success', data: products });
+      res.json({
+        status: 'success',
+        result: { ...products },
+        message: 'Products retrieved successfully',
+      });
     }
   } catch (error) {
     res.status(500).send({
@@ -40,7 +44,11 @@ export const show = async (req: Request, res: Response) => {
     if (!product) {
       res.json({ message: 'Product Not Found' });
     } else {
-      res.json({ message: 'Success', data: product });
+      res.json({
+        status: 'success',
+        result: { ...product },
+        message: 'Product retrieved successfully',
+      });
     }
   } catch (error) {
     res.status(500).send({

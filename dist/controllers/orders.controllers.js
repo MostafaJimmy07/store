@@ -30,7 +30,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const newOrder = yield orderModel.create(order);
         res.json({
             status: 'success',
-            data: Object.assign({}, newOrder),
+            result: Object.assign({}, newOrder),
             message: 'Order Created Successfully',
         });
     }
@@ -44,7 +44,11 @@ exports.create = create;
 const index = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield orderModel.index();
-        res.json(orders);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, orders),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         res.status(400);
@@ -57,7 +61,11 @@ const show = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     try {
         const order = yield orderModel.show(id);
-        res.json(order);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, order),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         res.status(400);
@@ -70,7 +78,11 @@ const usersOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const userId = req.params.id;
     try {
         const activeOrder = yield orderModel.AllOrderByUserId(userId);
-        res.json(activeOrder);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, activeOrder),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         res.status(400);
@@ -83,7 +95,11 @@ const userActiveOrder = (req, res) => __awaiter(void 0, void 0, void 0, function
     const userId = req.params.id;
     try {
         const activeOrder = yield orderModel.getActiveOrdersByUserId(userId);
-        res.json(activeOrder);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, activeOrder),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         res.status(400);
@@ -95,8 +111,12 @@ exports.userActiveOrder = userActiveOrder;
 const userCompleteOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id;
     try {
-        const activeOrder = yield orderModel.getCompleteOrdersByUserId(userId);
-        res.json(activeOrder);
+        const completeOrder = yield orderModel.getCompleteOrdersByUserId(userId);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, completeOrder),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         res.status(400);
@@ -110,7 +130,11 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const userId = req.params.id;
         const { productId, quantity } = req.body;
         const orderDetails = yield orderModel.addProductToOrder(userId, productId, quantity);
-        res.json(orderDetails);
+        res.json({
+            status: 'success',
+            result: Object.assign({}, orderDetails),
+            message: 'Orderretrieved successfully',
+        });
     }
     catch (err) {
         console.error(err);

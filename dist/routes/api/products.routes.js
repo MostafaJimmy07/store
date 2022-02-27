@@ -24,6 +24,6 @@ const controllers = __importStar(require("../../controllers/products.controllers
 const jwtAuthentication_1 = require("../../utils/jwtAuthentication");
 const productRoutes = (0, express_1.Router)();
 productRoutes.post('/create', jwtAuthentication_1.verifyAuthToken, controllers.create);
-productRoutes.get('/index', controllers.index);
-productRoutes.get('/show/:id', controllers.show);
+productRoutes.get('/index', jwtAuthentication_1.verifyAuthToken, controllers.index);
+productRoutes.get('/show/:id', jwtAuthentication_1.verifyAuthToken, controllers.show);
 exports.default = productRoutes;

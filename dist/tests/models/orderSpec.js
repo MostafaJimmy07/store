@@ -13,61 +13,83 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const order_model_1 = __importDefault(require("../../models/order.model"));
+const database_1 = __importDefault(require("../../database/database"));
 const user_model_1 = __importDefault(require("../../models/user.model"));
-const Orderstore = new order_model_1.default();
-const Userstore = new user_model_1.default();
-let order;
-let user;
-describe('Order Model', () => {
-    describe('should have CRUD methods', () => {
+const userModel = new user_model_1.default();
+const orderModel = new order_model_1.default();
+describe(' Order Model', () => {
+    /////////////////////////////////////////////////
+    describe('Test Methods Exist', () => {
+        it('should have a create method', () => {
+            expect(orderModel.create).toBeDefined();
+        });
         it('should have an index method', () => {
-            expect(Orderstore.index).toBeDefined();
+            expect(orderModel.index).toBeDefined();
         });
         it('should have a show method', () => {
-            expect(Orderstore.show).toBeDefined();
+            expect(orderModel.show).toBeDefined();
         });
-        it('should have a create method', () => {
-            expect(Orderstore.create).toBeDefined();
+        it('should have a getAllOrderBYUserId method', () => {
+            expect(orderModel.AllOrderByUserId).toBeDefined();
+        });
+        it('should have a getActiveOrderBYUserId method', () => {
+            expect(orderModel.getActiveOrdersByUserId).toBeDefined();
+        });
+        it('should have a getCompleteOrderBYUserId method', () => {
+            expect(orderModel.getCompleteOrdersByUserId).toBeDefined();
+        });
+        it('should have a AddProductToOrder method', () => {
+            expect(orderModel.addProductToOrder).toBeDefined();
         });
     });
-    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield Userstore.create({
-            user_name: 'ahmed',
-            first_name: 'gamal',
-            last_name: 'mostafa',
-            password: '12345678',
-        });
-        user = result;
-    }));
-    ////////////////////////////////////////////////////////////////
-    it('create method should add a order', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield Orderstore.create({
-            user_id: `${user.id}`,
-            status: 'active',
-        });
-        order = result;
-        expect(result).toEqual({
-            id: order.id,
-            user_id: `${user.id}`,
-            status: 'active',
-        });
-    }));
-    ////////////////////////////////////////////////////////////////
-    it('index method should return a list of orders', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield Orderstore.index();
-        expect(result[0]).toEqual({
-            id: order.id,
-            user_id: `${user.id}`,
-            status: 'active',
-        });
-    }));
-    ////////////////////////////////////////////////////////////////
-    it('show method should return the correct order', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield Orderstore.show(`${user.id}`);
-        expect(result).toEqual({
-            id: order.id,
-            user_id: `${user.id}`,
-            status: 'active',
-        });
-    }));
+    /////////////////////////////////////////////////////////////////////
+    describe('Test Order Model Logic', () => {
+        const user = {
+            user_name: 'test3User',
+            first_name: 'Test',
+            last_name: 'User',
+            passwrod: '98765432',
+        };
+        beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+            const createdUser = yield userModel.create(user);
+            user.id = createdUser.id;
+            const order = {
+                user_id: `${user.id}`,
+                status: 'complete',
+            };
+            const createdOrder = yield orderModel.create(order);
+            order.id = createdOrder.id;
+        }));
+        //////////////////////////////////////////////////////////
+        it('create method should add a NewOrder', () => __awaiter(void 0, void 0, void 0, function* () {
+            const createdOrder = yield orderModel.create({
+                user_id: user.id,
+                status: 'active',
+            });
+            expect(createdOrder).toEqual(jasmine.objectContaining({
+                id: createdOrder.id,
+                user_id: `${user.id}`,
+                status: 'active',
+            }));
+        }));
+        //////////////////////////////////////////////////////////
+        it('index method should return a list of orders', () => __awaiter(void 0, void 0, void 0, function* () {
+            const orders = yield orderModel.index();
+            expect(orders.length).toBe(2);
+        }));
+        //////////////////////////////////////////////////////////
+        it('show method should return the correct order', () => __awaiter(void 0, void 0, void 0, function* () {
+            const specificOrder = yield orderModel.AllOrderByUserId(user.id);
+            expect(specificOrder.length).toBe(2);
+        }));
+        //////////////////////////////////////////////////////////
+        afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
+            const connection = yield database_1.default.connect();
+            yield connection.query('DELETE FROM orders;');
+            yield connection.query('ALTER SEQUENCE orders_id_seq RESTART WITH 1;');
+            yield connection.query('DELETE FROM users;');
+            yield connection.query('ALTER SEQUENCE users_id_seq RESTART WITH 1;');
+            connection.release();
+        }));
+    });
 });

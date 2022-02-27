@@ -12,52 +12,115 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const user_model_1 = __importDefault(require("../../models/user.model"));
 const server_1 = __importDefault(require("../../server"));
 const supertest_1 = __importDefault(require("supertest"));
+const database_1 = __importDefault(require("../../database/database"));
+const userModel = new user_model_1.default();
 const request = (0, supertest_1.default)(server_1.default);
-describe('Orders controller', () => {
-    let token;
-    const getToken = () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield request.post('/users');
-        token = response.body.token;
-        return 'Bearer ' + token;
-    });
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    describe('POST /order/create', () => {
-        it('/orders endpoint should responds with status 404 with token', () => __awaiter(void 0, void 0, void 0, function* () {
-            const response = yield request
-                .post('/orders/create')
-                .set('Authorization', yield getToken());
-            expect(response.status).toBe(404);
-        }));
-    });
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    describe('GET /orders/indx', () => {
-        it('/orders/index this endpoint should return all orders with response status 404', () => __awaiter(void 0, void 0, void 0, function* () {
-            const response = yield request.get('/products/index');
-            expect(response.status).toBe(404);
-        }));
-    });
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    describe('GET /orders/show/1', () => {
-        it('/orders/show/:id this endpoint should return specific product with response status 404', () => __awaiter(void 0, void 0, void 0, function* () {
-            const response = yield request.get('/products/show/1');
-            expect(response.status).toBe(404);
-        }));
-    });
-    //////////////////////////////////////////////////////////////////////////////////////////
-    it('gets /orders/users/:id/active returns an active order ', () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield request
-            .get('/orders/users/1/active')
-            .set('Authorization', yield getToken());
-        expect(response.status).toBe(404);
+let token = '';
+describe('Order API EndPoint', () => {
+    const user = {
+        user_name: 'testUser',
+        first_name: 'Test',
+        last_name: 'User',
+        password: '87654321',
+    };
+    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+        const createdUser = yield userModel.create(user);
+        user.id = createdUser.id;
     }));
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    it('gets /orders/users/:id/completed returns a list of completed orders ', () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield request
-            .get('/orders/users/1/completed')
-            .set('Authorization', yield getToken());
-        expect(response.status).toBe(404);
+    describe('Test Authentication For Get Token To Create Order', () => {
+        it('should be able to login & authenticate to get token', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .post('/api/users/login')
+                .set('Content-Type', 'application/json')
+                .send({
+                user_name: 'testUser',
+                password: '87654321',
+            });
+            expect(res.status).toBe(200);
+            const { id, user_name } = res.body.result;
+            const { token: userToken } = res.body;
+            //console.log('USER', res.body);
+            expect(id).toBe(1);
+            expect(user_name).toBe('testUser');
+            token = userToken;
+            //console.log('Token :', token);
+        }));
+    });
+    ///////////////////////////////////////////////////
+    describe('Test API methods', () => {
+        it('should create Order', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .post('/api/orders/create')
+                .send({
+                user_id: `${user.id}`,
+                status: 'complete',
+            })
+                .send({ token: token })
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${token}`);
+            expect(res.status).toBe(200);
+            // console.log('NEW ORDER', res.body);
+            const { user_id, status } = res.body.result;
+            expect(user_id).toBe(user_id);
+            expect(status).toBe('complete');
+        }));
+        /////////////////////////////////////////////////////
+        it('should create new Order', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .post('/api/orders/create')
+                .send({
+                user_id: `${user.id}`,
+                status: 'active',
+            })
+                .send({ token: token })
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${token}`);
+            expect(res.status).toBe(200);
+            // console.log('NEW ORDER', res.body);
+            const { user_id, status } = res.body.result;
+            expect(user_id).toBe(user_id);
+            expect(status).toBe('active');
+        }));
+        ////////////////////////////////////////////////////////////////////////
+        it('should return All Orders by UserId', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .get('/api/orders/users/1/orders')
+                .send({ token: token })
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${token}`);
+            expect(res.status).toBe(200);
+            //console.log('ALL ORDER', res.body);
+        }));
+        ////////////////////////////////////////
+        it('should return AllCompletedOrders by UserId', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .get(`/api/orders/users/${user.id}/completed`)
+                .send({ token: token })
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${token}`);
+            expect(res.status).toBe(200);
+            // console.log('COMPLETED ORDER', res.body);
+        }));
+        ////////////////////////////////////////
+        it('should return AllActiveOrders by UserId', () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield request
+                .get(`/api/orders/users/${user.id}/active`)
+                .send({ token: token })
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${token}`);
+            expect(res.status).toBe(200);
+            // console.log('ACTIVE ORDER', res.body);
+        }));
+    });
+    afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
+        const connection = yield database_1.default.connect();
+        yield connection.query('DELETE FROM orders;');
+        yield connection.query('ALTER SEQUENCE orders_id_seq RESTART WITH 1;');
+        yield connection.query('DELETE FROM users;');
+        yield connection.query('ALTER SEQUENCE users_id_seq RESTART WITH 1;');
+        connection.release();
     }));
-    ///////////////////////////////////////////////////////////////////////////////////////////////
 });

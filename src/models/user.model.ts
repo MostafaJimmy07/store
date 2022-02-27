@@ -9,7 +9,7 @@ const saltrounds = process.env.SALT_ROUNDS;
 class UserModel {
   //////////////////////////////////CREATE USER////////////////////////////////////////////////////////
   async create(user: User): Promise<User> {
-    const { user_name, first_name, last_name } = user;
+    const { user_name, first_name, last_name, password } = user;
 
     try {
       //open conn with DB
@@ -18,7 +18,7 @@ class UserModel {
                    VALUES ($1,$2,$3,$4) returning * `;
       //run query
       const hash = bcrypt.hashSync(
-        user.password + pepper,
+        password + pepper,
         parseInt(saltrounds as string)
       );
       const result = await connect.query(sql, [

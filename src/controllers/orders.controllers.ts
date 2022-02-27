@@ -18,7 +18,7 @@ export const create = async (req: Request, res: Response) => {
     const newOrder = await orderModel.create(order);
     res.json({
       status: 'success',
-      data: { ...newOrder },
+      result: { ...newOrder },
       message: 'Order Created Successfully',
     });
   } catch (err) {
@@ -31,7 +31,11 @@ export const create = async (req: Request, res: Response) => {
 export const index = async (_req: Request, res: Response) => {
   try {
     const orders = await orderModel.index();
-    res.json(orders);
+    res.json({
+      status: 'success',
+      result: { ...orders },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     res.status(400);
     res.json({ error: `${err}` });
@@ -43,7 +47,11 @@ export const show = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const order = await orderModel.show(id);
-    res.json(order);
+    res.json({
+      status: 'success',
+      result: { ...order },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     res.status(400);
     res.json({ error: `${err}` });
@@ -55,7 +63,11 @@ export const usersOrders = async (req: Request, res: Response) => {
 
   try {
     const activeOrder = await orderModel.AllOrderByUserId(userId);
-    res.json(activeOrder);
+    res.json({
+      status: 'success',
+      result: { ...activeOrder },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     res.status(400);
     res.json({ error: `${err}` });
@@ -67,7 +79,11 @@ export const userActiveOrder = async (req: Request, res: Response) => {
 
   try {
     const activeOrder = await orderModel.getActiveOrdersByUserId(userId);
-    res.json(activeOrder);
+    res.json({
+      status: 'success',
+      result: { ...activeOrder },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     res.status(400);
     res.json({ error: `${err}` });
@@ -78,8 +94,12 @@ export const userCompleteOrder = async (req: Request, res: Response) => {
   const userId = req.params.id;
 
   try {
-    const activeOrder = await orderModel.getCompleteOrdersByUserId(userId);
-    res.json(activeOrder);
+    const completeOrder = await orderModel.getCompleteOrdersByUserId(userId);
+    res.json({
+      status: 'success',
+      result: { ...completeOrder },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     res.status(400);
     res.json({ error: `${err}` });
@@ -95,7 +115,11 @@ export const addProduct = async (req: Request, res: Response) => {
       productId,
       quantity
     );
-    res.json(orderDetails);
+    res.json({
+      status: 'success',
+      result: { ...orderDetails },
+      message: 'Orderretrieved successfully',
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send(`${err}`);

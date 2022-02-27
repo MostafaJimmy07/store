@@ -12,11 +12,11 @@ import client from './database/database';
 import router from './routes/index';
 //import usersRoute from './controllers/users.controllers';
 const app: Application = express();
-const port = process.env.port || 3000;
+const port = process.env.port || 5000;
 app.use(express.json() as RequestHandler);
 app.use(express.urlencoded({ extended: true }) as RequestHandler);
 
-app.use(morgan('common'));
+//app.use(morgan('common'));
 app.use(helmet());
 
 app.get('/', (req, res) => {

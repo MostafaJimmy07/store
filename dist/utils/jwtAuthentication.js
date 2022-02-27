@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23,25 +14,64 @@ const createAuthToken = (user_name) => {
 };
 exports.createAuthToken = createAuthToken;
 ////////////////////////////////VERIFY JWT/////////////////////////////////////////////////////
-const verifyAuthToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+/* export const verifyAuthToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    const tokenFromHeader = authorizationHeader
+      ? authorizationHeader.split(' ')[1]
+      : '';
+    const token = jwt.verify(
+      tokenFromHeader,
+      TOKEN_SECRET as unknown as jwt.Secret
+    );
+    if (!token) {
+      throw new Error();
+    }
+
+    next();
+  } catch (err) {
+    console.log(err);
+    res.status(401);
+    res.json('Access denied, invalid token');
+  }
+}; */
+const verifyAuthToken = (req, res, next) => {
     try {
-        const authorizationHeader = req.headers.authorization;
-        const tokenFromHeader = authorizationHeader
-            ? authorizationHeader.split(' ')[1]
-            : '';
-        const token = jsonwebtoken_1.default.verify(tokenFromHeader, TOKEN_SECRET);
-        if (!token) {
+        const authHeader = req.headers.authorization;
+        if (authHeader) {
+            //console.log('Tokenbefore : ', authHeader);
+            const bearer = authHeader.split(' ')[0].toLowerCase();
+            const token = authHeader.split(' ')[1];
+            if (token && bearer === 'bearer') {
+                const decode = jsonwebtoken_1.default.verify(token, TOKEN_SECRET);
+                if (decode) {
+                    // console.log('TokenAfter : ', decode);
+                    next();
+                }
+                else {
+                    // Failed to authenticate user.
+                    throw new Error();
+                }
+            }
+            else {
+                // token type not bearer
+                throw new Error();
+            }
+        }
+        ////////////////////
+        else {
+            // No Token Provided.
             throw new Error();
         }
-        /* const payload = jwt.decode(token as string)
-        const user=await userModel.show(payload?.sub as string)
-        if(!user) throw new Error  */
-        next();
     }
     catch (err) {
         console.log(err);
         res.status(401);
         res.json('Access denied, invalid token');
     }
-});
+};
 exports.verifyAuthToken = verifyAuthToken;
